@@ -3,41 +3,69 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func main() {
+type calculate struct{}
 
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	operation := scanner.Text()
-	fmt.Println(operation)
+func (calculate) parseString(operator string) (int, error) {
+	result, err := strconv.Atoi(operator)
+	return result, err
+}
 
-	operator := "+"
-	values := strings.Split(operation, operator)
-	fmt.Println(values)
-	fmt.Println(values[0] + values[1])
-	operator1, error1 := strconv.Atoi(values[0])
-	if error1 != nil {
-		fmt.Println(error1)
+func (c calculate) operate(input string, operation string) (int, error) {
+	cleanInput := strings.Split(input, operation)
+	operator1, err := c.parseString(cleanInput[0])
+	if err != nil {
+		return 0, err
 	}
-	fmt.Println(operator1)
-
-	operator2, _ := strconv.Atoi(values[1])
-
-	switch operator {
+	operator2, err := c.parseString(cleanInput[1])
+	if err != nil {
+		return 0, err
+	}
+	switch operation {
 	case "+":
 		fmt.Println("Sum: ",operator1 + operator2)
+		return operator1 + operator2, nil
 	case "-":
 		fmt.Println("Rest: ",operator1 - operator2)
+		return operator1 - operator2, nil
 	case "*":
 		fmt.Println("Product: ",operator1 * operator2)
+		return operator1 * operator2, nil
 	case "/":
 		fmt.Println("Division: ", operator1 / operator2)
+		return operator1 / operator2, nil
 	default:
-		fmt.Println(operator, "Not can support")
+		log.Println(operation, "operation is not supported!")
+		return 0, nil
 	}
+}
 
+func main() {
+	fmt.Println("Enter your input")
+	input := readInput()
+	fmt.Println("Enter your operation")
+	operator := readInput()
+	processResult(input, operator)
+
+}
+
+func readInput() string {
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	return scanner.Text()
+}
+
+func processResult(input string, operator string) {
+	c := calculate{}
+	value, err := c.operate(input, operator)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("Result of", input, "equals to", value)
+	}
 }
