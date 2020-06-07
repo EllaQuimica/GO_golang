@@ -65,7 +65,7 @@ func processResult(input string, operator string) {
 	value, err := c.operate(input, operator)
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		fmt.Println("Result of", input, "equals to", value)
 	}
+	fmt.Println("Result of", input, "equals to", value)
+
 }
